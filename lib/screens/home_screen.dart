@@ -1,162 +1,6 @@
-// import 'package:bin_it_right/screens/games_screen.dart';
-// import 'package:bin_it_right/theme/app_theme.dart';
-// import 'package:flutter/material.dart';
-
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Padding(
-//         padding: const EdgeInsets.all(16),
-//         child: Column(
-//           children: [
-//             const SizedBox(height: 32),
-//             Container(
-//               width: double.infinity,
-//               padding: const EdgeInsets.all(16),
-//               decoration: BoxDecoration(
-//                 color: AppTheme.card,
-//                 borderRadius: BorderRadius.circular(24),
-//                 boxShadow: const [
-//                   BoxShadow(
-//                     blurRadius: 12,
-//                     offset: Offset(0, 6),
-//                     color: Color(0x22000000)
-//                   )
-//                 ]
-//               ),
-//               child: const Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     "Learn where trash goes",
-//                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-//                     ),
-//                     SizedBox(height: 6),
-//                     Text(
-//                       "Scan an item or play sorting games.",
-//                       style: TextStyle(fontSize: 16),
-//                     )
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(height: 16),
-
-//             _BigActionButton(
-//               title: "Fun Sorting Games",
-//               subtitle: "Test your recycling skills",
-//               icon: Icons.videogame_asset,
-//               color: AppTheme.accent,
-//               onTap: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (_) => const GamesScreen()),
-//                 );
-//               },
-//             ),
-
-//             const Spacer(),
-//             const Text(
-//               "♻️ Recycle • 🌿 Biodegradable • 🗑️ Non-recyclable • 🔁 Reusable",
-//               textAlign: TextAlign.center,
-//             ),
-//             const SizedBox(height: 12),
-//           ],
-//         )
-//       ),
-//     );
-//   }
-// }
-
-// class _BigActionButton extends StatelessWidget {
-//   final String title;
-//   final String subtitle;
-//   final IconData icon;
-//   final Color color;
-//   final VoidCallback onTap;
-
-//   const _BigActionButton({
-//     required this.title,
-//     required this.subtitle,
-//     required this.icon,
-//     required this.color,
-//     required this.onTap,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       borderRadius: BorderRadius.circular(24),
-//       onTap: onTap,
-//       child: Ink(
-//         width: double.infinity,
-//         padding: const EdgeInsets.all(18),
-//         decoration: BoxDecoration(
-//           color: color,
-//           borderRadius: BorderRadius.circular(24),
-//           boxShadow: const [
-//             BoxShadow(
-//               blurRadius: 12,
-//               offset: Offset(0, 6),
-//               color: Color(0x22000000)
-//             )
-//           ],
-//         ),
-//         child: Row(
-//           children: [
-//             Container(
-//               padding: const EdgeInsets.all(12),
-//               decoration: BoxDecoration(
-//                 color: Colors.white.withOpacity(0.35),
-//                 borderRadius: BorderRadius.circular(18),
-//               ),
-//               child: Icon(
-//                 icon,
-//                 size: 30,
-//                 color: const Color(0xFF1F2D1F),
-//               ),
-//             ),
-//             const SizedBox(width: 14),
-//             Expanded(
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     title,
-//                     style: const TextStyle(
-//                       fontSize: 20,
-//                       fontWeight: FontWeight.w900,
-//                       color: Color(0xFF1F2D1F),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 2),
-//                   Text(
-//                     subtitle,
-//                     style: const TextStyle(
-//                       fontSize: 14,
-//                       color: Color(0xFF1F2D1F),
-//                     ),
-//                   )
-//                 ],
-//               ),
-//             ),
-//             const Icon(
-//               Icons.chevron_right_rounded,
-//               size: 34,
-//               color: Color(0xFF1F2D1F),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'predict_screen.dart';
+import 'scan_screen.dart';
 import 'games_menu_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -210,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Stack(
             children: [
               Positioned(
-                bottom: 200,
+                bottom: 300,
                 right: 150,
                 child: Container(
                   height: 80,
@@ -250,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       child: Stack(
                         children: [
                           Positioned(
-                            left: 50,
+                            left: 40,
                             top: 0,
                             child: Container(
                               width: 200,
@@ -291,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const PredictScreen(),
+                                  builder: (_) => const ScanScreen(),
                                 ),
                               );
                             },
