@@ -77,9 +77,27 @@ flutter:
     - family: Song of Valentine Sans
       fonts:
         - asset: assets/fonts/Song of Valentine Sans.otf
+        
     - family: Winter Draw
       fonts:
         - asset: assets/fonts/Winter Draw.otf
+
+    - family: Starborn
+      fonts:
+        - asset: assets/fonts/Starborn.ttf
+
+    - family: Adelia
+      fonts:
+        - asset: assets/fonts/ADELIA.otf
+
+    - family: Simply Olive Demo
+      fonts:
+        - asset: assets/fonts/Simply Olive DEMO.ttf
+
+    - family: RetroMario-Regular
+      fonts:
+        - asset: assets/fonts/RetroMario-Regular.otf
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

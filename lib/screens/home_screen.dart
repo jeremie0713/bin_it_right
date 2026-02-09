@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'scan_screen.dart';
 import 'games_menu_screen.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,6 +14,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late final AnimationController _leftCtrl;
   late final AnimationController _rightCtrl;
+
+  int _currentPage = 0;
+
+  final List<String> carouselImages = [
+    'assets/images/non_recyclable.png',
+    'assets/images/biodegradable.png',
+    'assets/images/reusable.png',
+    'assets/images/recyclable.png',
+  ];
 
   @override
   void initState() {
@@ -47,14 +57,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/home_bg.jpg'),
+              image: AssetImage('assets/images/home_bg.gif'),
               fit: BoxFit.fill,
             ),
           ),
           child: Stack(
             children: [
               Positioned(
-                bottom: 300,
+                bottom: 250,
                 right: 150,
                 child: Container(
                   height: 80,
@@ -80,6 +90,52 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+              // FlutterCarousel Widget
+              Positioned(
+                bottom: 10,
+                left: 0,
+                right: 0,
+                child: FlutterCarousel(
+                  options: FlutterCarouselOptions(
+                    height: 220,
+                    autoPlay: true,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayCurve: Curves.fastOutSlowIn,
+                    enlargeCenterPage: true,
+                    showIndicator: false,
+                    viewportFraction: 0.85,
+                    onPageChanged: (index, reason) {
+                      setState(() => _currentPage = index);
+                    },
+                  ),
+                  items: carouselImages.map((imagePath) {
+                    return GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 1),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.asset(
+                            imagePath,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    size: 50,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
               // Main content
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -90,19 +146,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   children: [
                     const SizedBox(height: 8),
                     SizedBox(
-                      height: 150,
+                      height: 120,
                       child: Stack(
                         children: [
                           Positioned(
                             left: 40,
-                            top: 0,
+                            top: 10,
                             child: Container(
-                              width: 200,
-                              height: 200,
+                              width: 150,
+                              height: 100,
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage('assets/images/title.png'),
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
                             ),
@@ -110,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           // GIF positioned at top right
                           Positioned(
                             right: 40,
-                            top: 40,
+                            top: 10,
                             child: Container(
                               width: 100,
                               height: 100,
@@ -125,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(
@@ -142,7 +198,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             child: Container(
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
-                                  image: AssetImage('assets/images/scan_tile.gif'), // Your scan tile image
+                                  image: AssetImage(
+                                    'assets/images/scan_tile.gif',
+                                  ), // Your scan tile image
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -164,7 +222,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             child: Container(
                               decoration: const BoxDecoration(
                                 image: DecorationImage(
-                                  image: AssetImage('assets/images/game_tile.gif'), // Your games tile image
+                                  image: AssetImage(
+                                    'assets/images/game_tile.gif',
+                                  ), // Your games tile image
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -173,9 +233,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ],
                     ),
-
-                    const Spacer(),
-                    _LegendRow(),
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -236,88 +293,6 @@ class _BouncyTile extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _HomeTileContent extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String emoji;
-
-  const _HomeTileContent({
-    required this.title,
-    required this.subtitle,
-    required this.emoji,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "$title $emoji",
-          style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w900),
-        ),
-        const Spacer(),
-        Text(
-          subtitle,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
-        ),
-      ],
-    );
-  }
-}
-
-class _LegendRow extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    Widget dot(Color c) => Container(
-      width: 10,
-      height: 10,
-      decoration: BoxDecoration(color: c, shape: BoxShape.circle),
-    );
-
-    return Wrap(
-      alignment: WrapAlignment.center,
-      runAlignment: WrapAlignment.center,
-      spacing: 12,
-      runSpacing: 8,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            dot(Colors.blue),
-            const SizedBox(width: 6),
-            const Text("Recyclable"),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            dot(Colors.green),
-            const SizedBox(width: 6),
-            const Text("Biodegradable"),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            dot(Colors.red),
-            const SizedBox(width: 6),
-            const Text("Non-recyclable"),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            dot(Colors.yellow),
-            const SizedBox(width: 6),
-            const Text("Reusable"),
-          ],
-        ),
-      ],
     );
   }
 }

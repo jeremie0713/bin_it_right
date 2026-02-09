@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'game_sort_screen.dart';
+import 'dart:math';
 
 class GamesMenuScreen extends StatefulWidget {
   const GamesMenuScreen({super.key});
@@ -9,24 +9,90 @@ class GamesMenuScreen extends StatefulWidget {
   State<GamesMenuScreen> createState() => _GamesMenuScreenState();
 }
 
-class _GamesMenuScreenState extends State<GamesMenuScreen> {
-  int _currentPage = 0;
+class _GamesMenuScreenState extends State<GamesMenuScreen>
+    with TickerProviderStateMixin {
 
-  final List<String> carouselImages = [
-    'assets/images/non_recyclable.png',
-    'assets/images/biodegradable.png',
-    'assets/images/reusable.png',
-    'assets/images/recyclable.png',
-  ];
+  late AnimationController _dancingController;
 
   @override
   void initState() {
     super.initState();
+
+    _dancingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    );
+    _dancingController.repeat(reverse: true);
   }
 
   @override
   void dispose() {
+
+    _dancingController.dispose();
+
     super.dispose();
+  }
+
+  Widget _buildDancingText(String text) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: text.split('').asMap().entries.map((entry) {
+          int index = entry.key;
+          String letter = entry.value;
+
+          return AnimatedBuilder(
+            animation: _dancingController,
+            builder: (context, child) {
+              double delay = (index * 0.08) % 1.0;
+              double animationValue = (_dancingController.value + delay) % 1.0;
+
+              double wave = sin(animationValue * 2 * pi);
+
+              // Bounce effect
+              double bounce = wave * 3;
+
+              // Rotation effect
+              double rotation = wave * 0.1;
+
+              // 🌿 Color shift
+              double colorValue = (wave + 1) / 2;
+              // converts -1..1  into 0..1
+
+              Color animatedColor = Color.lerp(
+                const Color(0xFF4a7c28),
+                const Color(0xFF304612),
+                colorValue,
+              )!;
+
+              return Transform.translate(
+                offset: Offset(0, bounce),
+                child: Transform.rotate(
+                  angle: rotation,
+                  child: Text(
+                    letter,
+                    style: TextStyle(
+                      fontFamily: 'ADELIA',
+                      fontSize: 17,
+                      fontWeight: FontWeight.w900,
+                      color: animatedColor,
+                      shadows: const [
+                        Shadow(
+                          blurRadius: 2,
+                          color: Colors.black26,
+                          offset: Offset(1, 1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        }).toList(),
+      ),
+    );
   }
 
   @override
@@ -38,7 +104,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/game_menu_bg.gif'),
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
             ),
             child: SafeArea(
@@ -46,56 +112,11 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    const SizedBox(height: 60),
-                    // FlutterCarousel Widget
-                    FlutterCarousel(
-                      options: FlutterCarouselOptions(
-                        height: 220,
-                        autoPlay: true,
-                        autoPlayInterval: const Duration(seconds: 3),
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        enlargeCenterPage: true,
-                        showIndicator: false,
-                        viewportFraction: 0.85,
-                        onPageChanged: (index, reason) {
-                          setState(() => _currentPage = index);
-                        },
-                      ),
-                      items: carouselImages.map((imagePath) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const GameSortScreen(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 1),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(15),
-                              child: Image.asset(
-                                imagePath,
-                                fit: BoxFit.fill,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[300],
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.image_not_supported,
-                                        size: 50,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                    const SizedBox(height: 250),
+                    _buildDancingText(
+                      "Have fun while learning how to sort waste correctly!",
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 5),
                     Expanded(
                       child: ListView(
                         children: [
@@ -119,6 +140,13 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
                             imagePath: 'assets/images/river_trash.png',
                             onTap: () {},
                           ),
+                          _GameCard(
+                            title: "WHAT BIN IS IT?",
+                            subtitle:
+                                "Test your trash sorting skills with this fun quiz game!",
+                            imagePath: 'assets/images/what_bin.gif',
+                            onTap: () {},
+                          ),
                         ],
                       ),
                     ),
@@ -132,7 +160,11 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
             top: 16,
             left: 2,
             child: IconButton(
-              icon: const Icon(Icons.arrow_circle_left_rounded, color: Color(0xFFc32b55), size: 35),
+              icon: const Icon(
+                Icons.arrow_circle_left_rounded,
+                color: Color(0xFF304612),
+                size: 40,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -144,7 +176,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen> {
   }
 }
 
-class _GameCard extends StatelessWidget {
+class _GameCard extends StatefulWidget {
   final String title;
   final String subtitle;
   final String? imagePath;
@@ -158,11 +190,44 @@ class _GameCard extends StatelessWidget {
   });
 
   @override
+  State<_GameCard> createState() => _GameCardState();
+}
+
+class _GameCardState extends State<_GameCard> with SingleTickerProviderStateMixin {
+  
+  late AnimationController _beatController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _beatController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(
+        parent: _beatController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _beatController.repeat(reverse: true);
+  }
+
+  void dispose() {
+    _beatController.dispose();
+    super.dispose();
+  }
+  
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: GestureDetector(
-        onTap: onTap,
+        onTap: widget.onTap,
         child: Container(
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
@@ -172,22 +237,31 @@ class _GameCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              if (imagePath != null)
+              if (widget.imagePath != null)
                 Padding(
                   padding: const EdgeInsets.only(right: 3),
-                  child: Image.asset(
-                    imagePath!,
-                    width: 140,
-                    height: 110,
-                    fit: BoxFit.fill,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 140,
-                        height: 110,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.image_not_supported),
+                  child: AnimatedBuilder(
+                    animation: _scaleAnimation,
+                    builder: (context, child) {
+                      return Transform.scale(
+                        scale: _scaleAnimation.value,
+                        child: child,
                       );
                     },
+                    child: Image.asset(
+                      widget.imagePath!,
+                      width: 140,
+                      height: 110,
+                      fit: BoxFit.fill,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 140,
+                          height: 110,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.image_not_supported),
+                        );
+                      },
+                    ),
                   ),
                 ),
               Expanded(
@@ -196,7 +270,7 @@ class _GameCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      title,
+                      widget.title,
                       style: const TextStyle(
                         fontFamily: 'Song of Valentine Sans',
                         fontSize: 24,
@@ -206,9 +280,9 @@ class _GameCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      subtitle,
+                      widget.subtitle,
                       style: const TextStyle(
-                        fontFamily: 'Winter Draw',
+                        fontFamily: 'Simply Olive DEMO',
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF304612),
