@@ -1,3 +1,4 @@
+import 'package:bin_it_right/screens/catch_trash.dart';
 import 'package:flutter/material.dart';
 import 'game_sort_screen.dart';
 import 'dart:math';
@@ -128,7 +129,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const GameSortScreen(),
+                                  builder: (_) =>  WasteSortingGamePage(),
                                 ),
                               );
                             },
@@ -138,7 +139,14 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                             subtitle:
                                 "Grab the trash and protect rivers and seas!",
                             imagePath: 'assets/images/river_trash.png',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>  CatchTrash(),
+                                ),
+                              );
+                            },
                           ),
                           _GameCard(
                             title: "WHAT BIN IS IT?",
