@@ -14,10 +14,13 @@ class _CatchTrashState extends State<CatchTrash> {
   int score = 0;
   int lifelines = 5;
   double baseFallSpeed = 3.0;
+  TrashItem? activeDrag;
+
   bool gameOver = false;
   bool isPaused = false;
   String? hoveredBin;
   String? shakingBin;
+  List<FloatingStar> floatingStars = [];
 
   // Trash types and their correct bins
   final List<String> trashTypes = [
@@ -27,17 +30,16 @@ class _CatchTrashState extends State<CatchTrash> {
     'non-recyclable',
   ];
   final Map<String, String> binImages = {
-    'reusable': 'assets/images/reusable_bin.png',
-    'recyclable': 'assets/images/recyclable_bin.png',
-    'biodegradable': 'assets/images/biodegradable_bin.png',
-    'non-recyclable': 'assets/images/non_recyclable_bin.png',
+    'reusable': 'assets/game/reusable_bin.png',
+    'recyclable': 'assets/game/recyclable_bin.png',
+    'biodegradable': 'assets/game/biodegradable_bin.png',
+    'non-recyclable': 'assets/game/non_recyclable_bin.png',
   };
   final Map<String, List<String>> trashImages = {
     'reusable': [
       'assets/game/shirt.png',
       'assets/game/pants.png',
       'assets/game/shoes.png',
-      'assets/game/glass_bottle_1.png',
       'assets/game/socks.png',
     ],
     'recyclable': [
@@ -155,8 +157,8 @@ class _CatchTrashState extends State<CatchTrash> {
 
       // Move trash down
       for (var trash in fallingTrash) {
-        if (!trash.isBeingDragged) {
-          trash.y += getFallSpeed(); // Speed
+        if (!trash.isBeingDragged && !trash.isSnapping) {
+          trash.y += getFallSpeed();
         }
       }
 
@@ -184,8 +186,9 @@ class _CatchTrashState extends State<CatchTrash> {
     if (binRects[correctBin]!.contains(position)) {
       setState(() {
         score++;
-        fallingTrash.remove(trash);
       });
+
+      snapToBin(trash, binRects[correctBin]!);
       return;
     }
 
@@ -199,8 +202,8 @@ class _CatchTrashState extends State<CatchTrash> {
           // ✅ Correct bin
           setState(() {
             score++;
-            fallingTrash.remove(trash);
           });
+          snapToBin(trash, rect);
           return;
         } else {
           // ❌ Wrong bin → shake
@@ -226,309 +229,470 @@ class _CatchTrashState extends State<CatchTrash> {
     });
   }
 
+  void showFloatingStar(double x, double y) {
+    final star = FloatingStar(x: x, y: y);
+
+    setState(() => floatingStars.add(star));
+
+    Timer.periodic(const Duration(milliseconds: 50), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        star.y -= 4;
+        star.opacity -= 0.05;
+      });
+
+      if (star.opacity <= 0) {
+        floatingStars.remove(star);
+        timer.cancel();
+      }
+    });
+  }
+
+  void snapToBin(TrashItem trash, Rect binRect) {
+    trash.isSnapping = true;
+
+    trash.snapTargetX = binRect.center.dx - 25;
+    trash.snapTargetY = binRect.top - 20;
+
+    Timer.periodic(const Duration(milliseconds: 16), (timer) {
+      if (!mounted || !fallingTrash.contains(trash)) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        final dx = trash.snapTargetX! - trash.x;
+        final dy = trash.snapTargetY! - trash.y;
+
+        trash.x += dx * 0.2;
+        trash.y += dy * 0.2;
+        trash.opacity -= 0.05;
+      });
+
+      if (trash.opacity <= 0) {
+        showFloatingStar(trash.x, trash.y);
+        fallingTrash.remove(trash);
+        timer.cancel();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(title: const Text('Catch the Trash')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          bodyWidth = constraints.maxWidth; // Set bodyWidth
-          bodyHeight = constraints.maxHeight;
+    return WillPopScope(
+      onWillPop: () async {
+        await showQuitDialog();
+        return false; // prevent auto pop
+      },
+      child: Scaffold(
+        // appBar: AppBar(title: const Text('Catch the Trash')),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            bodyWidth = constraints.maxWidth; // Set bodyWidth
+            bodyHeight = constraints.maxHeight;
 
-          // Update binRects based on actual body constraints
-          for (int i = 0; i < trashTypes.length; i++) {
-            final type = trashTypes[i];
-            binRects[type] = Rect.fromLTWH(
-              (constraints.maxWidth / 4) * i,
-              constraints.maxHeight - 370,
-              constraints.maxWidth / 4,
-              100,
-            );
-          }
+            // Update binRects based on actual body constraints
+            for (int i = 0; i < trashTypes.length; i++) {
+              final type = trashTypes[i];
+              binRects[type] = Rect.fromLTWH(
+                (constraints.maxWidth / 4) * i,
+                constraints.maxHeight - 370,
+                constraints.maxWidth / 4,
+                100,
+              );
+            }
 
-          return Stack(
-            children: [
-              // Background image
-              Positioned.fill(
-                child: Image.asset(
-                  'assets/game/river_bank.gif',
-                  fit: BoxFit.cover,
+            return Stack(
+              children: [
+                // Background image
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/game/river_bank.gif',
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
 
-              // UI Overlay
-              Positioned(
-                top: 25,
-                right: 13,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                // UI Overlay
+                Positioned(
+                  top: 22,
+                  right: 13,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xffc3deac).withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0xff7baf31),
+                          blurRadius: 6,
+                          offset: Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        buildScore(),
+                        const SizedBox(width: 15),
+                        buildLives(),
+                        const SizedBox(width: 15),
+
+                        // Pause / Resume button
+                        GestureDetector(
+                          onTap: () {
+                            if (isPaused) {
+                              resumeGame();
+                            } else {
+                              pauseGame();
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.3),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              isPaused
+                                  ? Icons.play_arrow_rounded
+                                  : Icons.pause_rounded,
+                              color: Colors.white,
+                              size: 23,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  decoration: BoxDecoration(
-                    color: Color(0xffc3deac).withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0xff7baf31),
-                        blurRadius: 6,
-                        offset: Offset(2, 4),
-                      ),
-                    ],
-                  ),
+                ),
+
+                // Bins
+                Positioned(
+                  bottom: 270,
+                  left: 0,
+                  right: 0,
                   child: Row(
-                    children: [
-                      buildScore(),
-                      const SizedBox(width: 15),
-                      buildLives(),
-                      const SizedBox(width: 15),
-
-                      // Pause / Resume button
-                      GestureDetector(
-                        onTap: () {
-                          if (isPaused) {
-                            resumeGame();
-                          } else {
-                            pauseGame();
-                          }
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: trashTypes.map((type) {
+                      return TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: shakingBin == type ? 1 : 0),
+                        duration: const Duration(milliseconds: 400),
+                        builder: (context, value, child) {
+                          final shakeOffset = sin(value * pi * 6) * 6;
+                          return Transform.translate(
+                            offset: Offset(shakeOffset, 0),
+                            child: child,
+                          );
                         },
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.3),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isPaused
-                                ? Icons.play_arrow_rounded
-                                : Icons.pause_rounded,
-                            color: Colors.white,
-                            size: 23,
+                        child: AnimatedScale(
+                          scale: hoveredBin == type ? 1.1 : 1.0,
+                          duration: const Duration(milliseconds: 150),
+                          curve: Curves.easeOut,
+                          child: Image.asset(
+                            binImages[type]!,
+                            width: constraints.maxWidth / 4,
+                            height: 100,
                           ),
                         ),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
                 ),
-              ),
 
-              // Bins
-              Positioned(
-                bottom: 270,
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: trashTypes.map((type) {
-                    return TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0, end: shakingBin == type ? 1 : 0),
-                      duration: const Duration(milliseconds: 400),
-                      builder: (context, value, child) {
-                        final shakeOffset = sin(value * pi * 6) * 6;
-                        return Transform.translate(
-                          offset: Offset(shakeOffset, 0),
-                          child: child,
-                        );
-                      },
-                      child: AnimatedScale(
-                        scale: hoveredBin == type ? 1.1 : 1.0,
-                        duration: const Duration(milliseconds: 150),
-                        curve: Curves.easeOut,
-                        child: Image.asset(
-                          binImages[type]!,
-                          width: constraints.maxWidth / 4,
-                          height: 100,
+                // Falling trash
+                ...fallingTrash.map(
+                  (trash) => Positioned(
+                    key: ValueKey(trash.id),
+                    left: trash.x,
+                    top: trash.y,
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onPanStart: activeDrag == null
+                            ? (_) {
+                                activeDrag = trash;
+
+                                fallingTrash.remove(trash);
+                                fallingTrash.add(trash);
+
+                                trash.isBeingDragged = true;
+                                trash.isSnapping = false;
+                                trash.opacity = 1.0;
+
+                                trash.startX = trash.x;
+                                trash.startY = trash.y;
+                              }
+                            : null,
+                        onPanUpdate: (details) {
+                          if (activeDrag != trash) return;
+
+                          setState(() {
+                            trash.x += details.delta.dx;
+                            trash.y += details.delta.dy;
+
+                            hoveredBin = null;
+                            final center = Offset(trash.x + 25, trash.y + 25);
+
+                            for (final entry in binRects.entries) {
+                              if (entry.value.contains(center)) {
+                                hoveredBin = entry.key;
+                                break;
+                              }
+                            }
+                          });
+                        },
+                        onPanEnd: (_) {
+                          if (activeDrag != trash) return;
+
+                          trash.isBeingDragged = false;
+                          hoveredBin = null;
+                          onDragEnd(trash, Offset(trash.x + 25, trash.y + 25));
+
+                          activeDrag = null;
+                        },
+                        child: Opacity(
+                          opacity: trash.opacity,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.5),
+                                  blurRadius: 12,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Image.asset(
+                              trash.imagePath,
+                              width: 50,
+                              height: 50,
+                            ),
+                          ),
                         ),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                  ),
                 ),
-              ),
 
-              // Falling trash
-              ...fallingTrash.map(
-                (trash) => Positioned(
-                  left: trash.x,
-                  top: trash.y,
-                  child: GestureDetector(
-                    onPanStart: (_) {
-                      trash.isBeingDragged = true;
-                      trash.startX = trash.x;
-                      trash.startY = trash.y;
-                    },
-                    onPanUpdate: (details) {
-                      setState(() {
-                        trash.x += details.delta.dx;
-                        trash.y += details.delta.dy;
-
-                        hoveredBin = null;
-                        final center = Offset(trash.x + 25, trash.y + 25);
-
-                        for (final entry in binRects.entries) {
-                          if (entry.value.contains(center)) {
-                            hoveredBin = entry.key;
-                            break;
-                          }
-                        }
-                      });
-                    },
-                    onPanEnd: (details) {
-                      trash.isBeingDragged = false;
-                      hoveredBin = null;
-                      onDragEnd(
-                        trash,
-                        Offset(trash.x + 25, trash.y + 25),
-                      ); // Approximate center
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.5),
-                            blurRadius: 12,
-                            spreadRadius: 2,
+                ...floatingStars.map(
+                  (star) => Positioned(
+                    left: star.x,
+                    top: star.y,
+                    child: Opacity(
+                      opacity: star.opacity,
+                      child: Row(
+                        children: const [
+                          Icon(
+                            Icons.star_rate_rounded,
+                            color: Color(0xfff1da06),
+                            size: 24,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            "+1",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        trash.imagePath,
-                        width: 50,
-                        height: 50,
-                      ),
                     ),
                   ),
                 ),
-              ),
 
-              if (gameOver) ...[
-                // Dark background overlay
-                Positioned.fill(
-                  child: Container(color: Colors.black.withOpacity(0.6)),
-                ),
+                if (gameOver) ...[
+                  // Dark background overlay
+                  Positioned.fill(
+                    child: Container(color: Colors.black.withOpacity(0.6)),
+                  ),
 
-                // Game Over Dialog
-                Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xfff3f8ef),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black45,
-                          blurRadius: 20,
-                          offset: Offset(0, 10),
-                        ),
-                      ],
+                  // Game Over Dialog
+                  Center(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xfff3f8ef),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 20,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Image
+                          Image.asset(
+                            'assets/game/great Job.gif',
+                            height: 120,
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // Title
+                          const Text(
+                            'Game Over',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xff7baf31),
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // Score
+                          Text(
+                            'You\'ve Earned: $score Stars',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              // Home Button
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                icon: const Icon(Icons.home_rounded),
+                                label: const Text('Home'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey.shade600,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+
+                              // Restart Button
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    gameOver = false;
+                                    isPaused = false;
+                                  });
+                                  startGame();
+                                },
+                                icon: const Icon(Icons.replay_rounded),
+                                label: const Text('Restart'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xff7baf31),
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Image
-                        Image.asset(
-                          'assets/game/game_over_ct.png',
-                          height: 120,
-                        ),
+                  ),
+                ],
 
-                        const SizedBox(height: 12),
-
-                        // Title
-                        const Text(
-                          'Game Over',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xff7baf31),
-                          ),
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        // Score
-                        Text(
-                          'You\'ve Earned: $score Stars',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            // Home Button
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              icon: const Icon(Icons.home_rounded),
-                              label: const Text('Home'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey.shade600,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
+                if (isPaused && !gameOver)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: resumeGame, // resume when tapped
+                          child: AnimatedScale(
+                            duration: const Duration(milliseconds: 150),
+                            scale: 1.0,
+                            child: Container(
+                              width: 120,
+                              height: 120,
+                              decoration: const BoxDecoration(
+                                color: Color(0xff7baf31),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black45,
+                                    blurRadius: 15,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.play_arrow_rounded,
+                                size: 70,
+                                color: Colors.white,
                               ),
                             ),
-
-                            // Restart Button
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                setState(() {
-                                  gameOver = false;
-                                  isPaused = false;
-                                });
-                                startGame();
-                              },
-                              icon: const Icon(Icons.replay_rounded),
-                              label: const Text('Restart'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xff7baf31),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ],
+                      ),
+                    ),
+                  ),
+
+                // Back button
+                Positioned(
+                  top: 19,
+                  left: 2,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await showQuitDialog();
+                    },
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff7baf31),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(
+                              0.45,
+                            ), // softer shadow
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded, // cleaner arrow
+                        color: Colors.white, // ✅ visible now
+                        size: 26, // fits inside circle
+                      ),
                     ),
                   ),
                 ),
               ],
-
-              // Back button
-              Positioned(
-                top: 19,
-                left: 2,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_circle_left_rounded,
-                    color: Color(0xff7baf31),
-                    size: 45,
-                  ),
-                  onPressed: () {
-                    showQuitDialog();
-                  },
-                ),
-              ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -574,31 +738,19 @@ class _CatchTrashState extends State<CatchTrash> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            'Quit Game?',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: const Text('Are you sure you want to quit the game?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.black),
+            title: const Text("Quit Game?"),
+            content: const Text("Are you sure you want to quit the game?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text("No"),
               ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xffda2756),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text("Yes"),
               ),
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Quit', style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
+            ],
+          );
       },
     );
 
@@ -625,6 +777,11 @@ class TrashItem {
   double startX;
   double startY;
   bool isBeingDragged;
+  bool isSnapping;
+  double? snapTargetX;
+  double? snapTargetY;
+  double opacity;
+  final String id = UniqueKey().toString();
 
   TrashItem({
     required this.type,
@@ -632,6 +789,18 @@ class TrashItem {
     required this.x,
     required this.y,
     this.isBeingDragged = false,
+    this.isSnapping = false,
+    this.snapTargetX,
+    this.snapTargetY,
+    this.opacity = 1.0,
   }) : startX = x,
        startY = y;
+}
+
+class FloatingStar {
+  double x;
+  double y;
+  double opacity = 1.0;
+
+  FloatingStar({required this.x, required this.y});
 }

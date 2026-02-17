@@ -1,4 +1,5 @@
 import 'package:bin_it_right/screens/catch_trash.dart';
+import 'package:bin_it_right/screens/clean_up_game.dart';
 import 'package:flutter/material.dart';
 import 'game_sort_screen.dart';
 import 'dart:math';
@@ -113,7 +114,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    const SizedBox(height: 250),
+                    const SizedBox(height: 255),
                     _buildDancingText(
                       "Have fun while learning how to sort waste correctly!",
                     ),
@@ -129,7 +130,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>  WasteSortingGamePage(),
+                                  builder: (_) =>  CleanTheParkGame(),
                                 ),
                               );
                             },
