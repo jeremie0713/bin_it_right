@@ -1,8 +1,10 @@
+import 'dart:developer';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'scan_screen.dart';
 import 'games_menu_screen.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
+import 'bin_info_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,187 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'assets/images/biodegradable.png',
     'assets/images/reusable.png',
     'assets/images/recyclable.png',
+  ];
+
+  final List<Map<String, dynamic>> binData = [
+    {
+      "title": "Non-Recyclable",
+      "color": const Color(0xFFff4f63),
+      "image": "assets/images/non_recyclable.png",
+      "items": [
+        {
+          "category": "Contaminated Hygiene Waste",
+          "items": [
+            {"image": "assets/game/diaper_1.png", "label": "Diaper"},
+            {"image": "assets/game/diaper_2.png", "label": "Diaper"},
+            {"image": "assets/game/mask.png", "label": "Mask"},
+            {"image": "assets/game/dirty_gloves.png", "label": "Dirty gloves"},
+            {"image": "assets/game/dirty_towel.png", "label": "Dirty towel"},
+            {
+              "image": "assets/game/toothbrush_trash.png",
+              "label": "Toothbrush",
+            },
+          ],
+        },
+        {
+          "category": "Wrappers and Mixed / Hard Plastics",
+          "items": [
+            {
+              "image": "assets/game/candy_wrapper.png",
+              "label": "Candy wrapper",
+            },
+            {"image": "assets/game/chip_bag.png", "label": "Chip bag"},
+            {"image": "assets/game/straw_1.png", "label": "Straw"},
+          ],
+        },
+        {
+          "category": "Broken / Damaged / Hazardous",
+          "items": [
+            {"image": "assets/game/broken_bulb.png", "label": "Broken bulb"},
+            {
+              "image": "assets/game/broken_ceramics.png",
+              "label": "Broken ceramics",
+            },
+            {
+              "image": "assets/game/broken_gadget.png",
+              "label": "Broken gadget",
+            },
+            {"image": "assets/game/broken_phone.png", "label": "Broken phone"},
+            {
+              "image": "assets/game/shattered_glass.png",
+              "label": "Shattered glass",
+            },
+          ],
+        },
+      ],
+      "message":
+          "These cannot be recycled. Put them in the right bin to keep our world clean!",
+    },
+    
+    {
+      "title": "Biodegradable",
+      "color": Colors.green,
+      "image": "assets/images/biodegradable.png",
+      "items": [
+        {
+          "category": "Food and Natural Waste",
+          "items": [
+            {"image": "assets/game/apple_core.png", "label": "Apple core"},
+            {"image": "assets/game/banana_peel.png", "label": "Banana peel"},
+            {
+              "image": "assets/game/chicken_leftover.png",
+              "label": "Chicken bone",
+            },
+            {"image": "assets/game/moldy_bread.png", "label": "Moldy bread"},
+            {"image": "assets/game/egg_shell_1.png", "label": "Egg shell"},
+            {"image": "assets/game/fish_bone.png", "label": "Fish bone"},
+            {
+              "image": "assets/game/pizza_leftover.png",
+              "label": "Pizza leftover",
+            },
+            {"image": "assets/game/tea_bag.png", "label": "Tea bag"},
+            {
+              "image": "assets/game/watermelon_peel.png",
+              "label": "Watermelon peel",
+            },
+          ],
+        },
+      ],
+      "message": "These turn into soil and help plants grow! 🌱",
+    },
+
+    {
+      "title": "Reusable",
+      "color": Colors.orange,
+      "image": "assets/images/reusable.png",
+      "items": [
+        {
+          "category": "Clothing & Fabric",
+          "items": [
+            {"image": "assets/game/pants.png", "label": "Pants"},
+            {"image": "assets/game/backpack.png", "label": "Backpack"},
+            {"image": "assets/game/shirt.png", "label": "Shirt"},
+            {"image": "assets/game/shoes.png", "label": "Shoes"},
+            {"image": "assets/game/socks.png", "label": "Socks"},
+          ],
+        },
+        {
+          "category": "Containers & Household Items (Clean)",
+          "items": [
+            {"image": "assets/game/tumbler_bottle.png", "label": "Tumbler"},
+            {
+              "image": "assets/game/food_container.png",
+              "label": "Food container",
+            },
+          ],
+        },
+        {
+          "category": "Others",
+          "items": [
+            {"image": "assets/game/old_books.png", "label": "Old books"},
+            {"image": "assets/game/old_toy_car.png", "label": "Toy car"},
+          ],
+        },
+      ],
+      "message": "Use them again instead of throwing them away!",
+    },
+
+    {
+      "title": "Recyclable",
+      "color": Colors.blue,
+      "image": "assets/images/recyclable.png",
+      "items": [
+        {
+          "category": "Paper and Cardboard",
+          "items": [
+            {"image": "assets/game/cardboard_2.png", "label": "Cardboard"},
+            {"image": "assets/game/paper_1.png", "label": "Paper"},
+            {"image": "assets/game/milk_carton.png", "label": "Milk carton"},
+            {
+              "image": "assets/game/toilet_paper_core.png",
+              "label": "Toilet paper core",
+            },
+          ],
+        },
+        {
+          "category": "Plastic (Clean)",
+          "items": [
+            {
+              "image": "assets/game/plastic_bottle_2.png",
+              "label": "Plastic bottle",
+            },
+            {"image": "assets/game/plastic_1.png", "label": "Plastic"},
+            {"image": "assets/game/plastic_cup_1.png", "label": "Plastic cup"},
+            {
+              "image": "assets/game/shampoo_bottle.png",
+              "label": "Shampoo bottle",
+            },
+            {
+              "image": "assets/game/detergent_bottle.png",
+              "label": "Detergent bottle",
+            },
+          ],
+        },
+        {
+          "category": "Metal",
+          "items": [
+            {"image": "assets/game/can_1.png", "label": "Can"},
+            {"image": "assets/game/soda_can_2.png", "label": "Soda can"},
+          ],
+        },
+        {
+          "category": "Glass",
+          "items": [
+            {
+              "image": "assets/game/glass_bottle_1.png",
+              "label": "Glass Bottle",
+            },
+            {"image": "assets/game/glass_jar.png", "label": "Glass Jar"},
+          ],
+        },
+      ],
+      "message": "These can become new things. Recycle to save energy!",
+    },
   ];
 
   @override
@@ -90,45 +273,93 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              // FlutterCarousel Widget
+
               Positioned(
                 bottom: 10,
                 left: 0,
                 right: 0,
+                child: Text(
+                  'Click and see what\'s in the bin!',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    shadows: [
+                      Shadow(
+                        blurRadius: 4,
+                        color: Colors.white70,
+                        offset: Offset(2, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // FlutterCarousel Widget
+              Positioned(
+                bottom: -9,
+                left: 0,
+                right: 0,
                 child: FlutterCarousel(
                   options: FlutterCarouselOptions(
-                    height: 220,
+                    height: 240,
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 3),
-                    autoPlayCurve: Curves.fastOutSlowIn,
+                    autoPlayCurve: Curves.easeInOut,
                     enlargeCenterPage: true,
+                    enlargeFactor: 0.35,
                     showIndicator: false,
-                    viewportFraction: 0.85,
+                    enableInfiniteScroll: true,
+                    viewportFraction: 0.50, // 👈 shows side bins
                     onPageChanged: (index, reason) {
                       setState(() => _currentPage = index);
                     },
                   ),
-                  items: carouselImages.map((imagePath) {
+                  items: List.generate(carouselImages.length, (index) {
+                    final imagePath = carouselImages[index];
+                    final data = binData[index];
+
                     return GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 1),
+                      onTap: () {
+                        if (_currentPage != index) return;
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BinInfoScreen(
+                              title: data["title"],
+                              color: data["color"],
+                              items: List<Map<String, dynamic>>.from(
+                                data["items"],
+                              ),
+                              message: data["message"],
+                              imagePath: data["image"],
+                            ),
+                          ),
+                        );
+                      },
+
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 8,
+                        ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.asset(
-                            imagePath,
-                            fit: BoxFit.fill,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    size: 50,
-                                  ),
+                          borderRadius: BorderRadius.circular(18),
+                          child: Stack(
+                            children: [
+                              Container(
+                                color: Colors
+                                    .transparent, // removes white background look
+                                child: Image.asset(
+                                  imagePath,
+                                  fit: BoxFit
+                                      .contain, // 👈 keeps full bin visible
+                                  width: double.infinity,
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -136,6 +367,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   }).toList(),
                 ),
               ),
+
               // Main content
               Padding(
                 padding: const EdgeInsets.symmetric(

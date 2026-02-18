@@ -50,6 +50,12 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/pants.png',
       'assets/game/shoes.png',
       'assets/game/socks.png',
+      'assets/game/backpack.png',
+      'assets/game/tumbler_bottle.png',
+      'assets/game/food_container.png',
+      'assets/game/old_books.png',
+      'assets/game/old_toy_car.png'
+
     ],
     'recyclable': [
       'assets/game/glass_bottle_1.png',
@@ -66,24 +72,34 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/plastic_cup_1.png',
       'assets/game/plastic_cup_2.png',
       'assets/game/straw_1.png',
-      'assets/game/toilet_paper.png',
+      'assets/game/toilet_paper_core.png',
       'assets/game/plastic_1.png',
       'assets/game/plastic_2.png',
+      'assets/game/milk_carton.png',
+      'assets/game/shampoo_bottle.png',
+      'assets/game/detergent_bottle.png',
+      'assets/game/glass_jar.png'
     ],
     'biodegradable': [
-      'assets/game/apple_trash.png',
+      'assets/game/apple_core.png',
       'assets/game/banana_peel.png',
-      'assets/game/chicken_trash.png',
+      'assets/game/chicken_leftover.png',
       'assets/game/egg_shell_1.png',
       'assets/game/egg_shell_2.png',
-      'assets/game/pizza_trash.png',
-      'assets/game/watermelon_trash.png',
+      'assets/game/pizza_leftover.png',
+      'assets/game/watermelon_peel.png',
+      'assets/game/moldy_bread.png',
+      'assets/game/fish_bone.png',
+      'assets/game/tea_bag.png'
     ],
     'non-recyclable': [
       'assets/game/battery.png',
-      'assets/game/diaper.png',
+      'assets/game/diaper_1.png',
+      'assets/game/diaper_2.png',
       'assets/game/mask.png',
-      'assets/game/toothbrush.png',
+      'assets/game/toothbrush_trash.png',
+      'assets/game/dirty_gloves.png',
+      'assets/game/dirty_towel.png'
     ],
   };
 
@@ -381,7 +397,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
             return Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset('assets/game/yard.gif', fit: BoxFit.cover),
+                  child: Image.asset('assets/images/yard.gif', fit: BoxFit.cover),
                 ),
 
                 // TIMER + SCORE
@@ -668,7 +684,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
                             children: [
                               // Image
                               Image.asset(
-                                'assets/game/great Job.gif',
+                                'assets/images/great Job.gif',
                                 height: 120,
                               ),
 
