@@ -42,6 +42,7 @@ dependencies:
   image: ^3.3.0
   flutter_carousel_widget: ^3.1.0
   carousel_slider: ^5.1.2
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:
@@ -71,7 +72,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/game/
-    - assets/items/
+    - assets/onboarding/
     - assets/models/
 
   fonts:

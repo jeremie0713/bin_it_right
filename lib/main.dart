@@ -1,29 +1,6 @@
-// import 'package:bin_it_right/screens/home_screen.dart';
-// import 'package:bin_it_right/theme/app_theme.dart';
-// import 'package:flutter/material.dart';
-
-
-// void main() {
-//   runApp(const BinItRightApp());
-// }
-
-// class BinItRightApp extends StatelessWidget {
-//   const BinItRightApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: "Bin It Right!",
-//       debugShowCheckedModeBanner: false,
-//       theme: AppTheme.light(),
-//       home: const HomeScreen(),
-//     );
-//   }
-// }
-
+import 'package:bin_it_right/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'screens/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +19,7 @@ class BinItRightApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.fredokaTextTheme(),
       ),
-      home: const HomeScreen(),
+      home: OnboardingScreen(),
     );
   }
 }
