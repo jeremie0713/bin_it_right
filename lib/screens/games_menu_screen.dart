@@ -1,5 +1,6 @@
 import 'package:bin_it_right/screens/catch_trash.dart';
 import 'package:bin_it_right/screens/clean_up_game.dart';
+import 'package:bin_it_right/screens/what_bin_quiz_game.dart';
 import 'package:flutter/material.dart';
 import 'game_sort_screen.dart';
 import 'dart:math';
@@ -13,7 +14,6 @@ class GamesMenuScreen extends StatefulWidget {
 
 class _GamesMenuScreenState extends State<GamesMenuScreen>
     with TickerProviderStateMixin {
-
   late AnimationController _dancingController;
 
   @override
@@ -29,7 +29,6 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
 
   @override
   void dispose() {
-
     _dancingController.dispose();
 
     super.dispose();
@@ -130,7 +129,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>  CleanTheParkGame(),
+                                  builder: (_) => CleanTheParkGame(),
                                 ),
                               );
                             },
@@ -143,9 +142,7 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) =>  CatchTrash(),
-                                ),
+                                MaterialPageRoute(builder: (_) => CatchTrash()),
                               );
                             },
                           ),
@@ -154,7 +151,14 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                             subtitle:
                                 "Test your trash sorting skills with this fun quiz game!",
                             imagePath: 'assets/images/what_bin.gif',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const WhatBinQuizGame(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -202,8 +206,8 @@ class _GameCard extends StatefulWidget {
   State<_GameCard> createState() => _GameCardState();
 }
 
-class _GameCardState extends State<_GameCard> with SingleTickerProviderStateMixin {
-  
+class _GameCardState extends State<_GameCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _beatController;
   late Animation<double> _scaleAnimation;
 
@@ -217,10 +221,7 @@ class _GameCardState extends State<_GameCard> with SingleTickerProviderStateMixi
     )..repeat(reverse: true);
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(
-        parent: _beatController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _beatController, curve: Curves.easeInOut),
     );
 
     _beatController.repeat(reverse: true);
@@ -230,7 +231,7 @@ class _GameCardState extends State<_GameCard> with SingleTickerProviderStateMixi
     _beatController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Padding(

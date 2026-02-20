@@ -1,0 +1,57 @@
+[
+  { "image": "assets/game/diaper_1.png", "label": "Diaper", "bin": "Non-Recyclable", "category": "Contaminated Hygiene Waste" },
+  { "image": "assets/game/diaper_2.png", "label": "Diaper", "bin": "Non-Recyclable", "category": "Contaminated Hygiene Waste" },
+  { "image": "assets/game/mask.png", "label": "Mask", "bin": "Non-Recyclable", "category": "Contaminated Hygiene Waste" },
+  { "image": "assets/game/dirty_gloves.png", "label": "Dirty gloves", "bin": "Non-Recyclable", "category": "Contaminated Hygiene Waste" },
+  { "image": "assets/game/toothbrush_trash.png", "label": "Toothbrush", "bin": "Non-Recyclable", "category": "Contaminated Hygiene Waste" },
+
+  { "image": "assets/game/candy_wrapper.png", "label": "Candy wrapper", "bin": "Non-Recyclable", "category": "Wrappers and Mixed / Hard Plastics" },
+  { "image": "assets/game/chip_bag.png", "label": "Chip bag", "bin": "Non-Recyclable", "category": "Wrappers and Mixed / Hard Plastics" },
+  { "image": "assets/game/straw_1.png", "label": "Straw", "bin": "Non-Recyclable", "category": "Wrappers and Mixed / Hard Plastics" },
+
+  { "image": "assets/game/broken_bulb.png", "label": "Broken bulb", "bin": "Non-Recyclable", "category": "Broken / Damaged / Hazardous" },
+  { "image": "assets/game/broken_ceramics.png", "label": "Broken ceramics", "bin": "Non-Recyclable", "category": "Broken / Damaged / Hazardous" },
+  { "image": "assets/game/broken_gadget.png", "label": "Broken gadget", "bin": "Non-Recyclable", "category": "Broken / Damaged / Hazardous" },
+  { "image": "assets/game/broken_phone.png", "label": "Broken phone", "bin": "Non-Recyclable", "category": "Broken / Damaged / Hazardous" },
+  { "image": "assets/game/shattered_glass.png", "label": "Shattered glass", "bin": "Non-Recyclable", "category": "Broken / Damaged / Hazardous" },
+
+  { "image": "assets/game/apple_core.png", "label": "Apple core", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/banana_peel.png", "label": "Banana peel", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/chicken_leftover.png", "label": "Chicken bone", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/moldy_bread.png", "label": "Moldy bread", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/egg_shell_1.png", "label": "Egg shell", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/fish_bone.png", "label": "Fish bone", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/pizza_leftover.png", "label": "Pizza leftover", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/tea_bag.png", "label": "Tea bag", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+  { "image": "assets/game/watermelon_peel.png", "label": "Watermelon peel", "bin": "Biodegradable", "category": "Food and Natural Waste" },
+
+  { "image": "assets/game/pants.png", "label": "Pants", "bin": "Reusable", "category": "Clothing & Fabric" },
+  { "image": "assets/game/backpack.png", "label": "Backpack", "bin": "Reusable", "category": "Clothing & Fabric" },
+  { "image": "assets/game/shirt.png", "label": "Shirt", "bin": "Reusable", "category": "Clothing & Fabric" },
+  { "image": "assets/game/shoes.png", "label": "Shoes", "bin": "Reusable", "category": "Clothing & Fabric" },
+  { "image": "assets/game/socks.png", "label": "Socks", "bin": "Reusable", "category": "Clothing & Fabric" },
+  { "image": "assets/game/old_towel.png", "label": "Old towel", "bin": "Reusable", "category": "Clothing & Fabric" },
+
+  { "image": "assets/game/tumbler_bottle.png", "label": "Tumbler", "bin": "Reusable", "category": "Containers & Household Items (Clean)" },
+  { "image": "assets/game/food_container.png", "label": "Food container", "bin": "Reusable", "category": "Containers & Household Items (Clean)" },
+
+  { "image": "assets/game/old_books.png", "label": "Old books", "bin": "Reusable", "category": "Others" },
+  { "image": "assets/game/old_toy_car.png", "label": "Toy car", "bin": "Reusable", "category": "Others" },
+
+  { "image": "assets/game/cardboard_2.png", "label": "Cardboard", "bin": "Recyclable", "category": "Paper and Cardboard" },
+  { "image": "assets/game/paper_1.png", "label": "Paper", "bin": "Recyclable", "category": "Paper and Cardboard" },
+  { "image": "assets/game/milk_carton.png", "label": "Milk carton", "bin": "Recyclable", "category": "Paper and Cardboard" },
+  { "image": "assets/game/toilet_paper_core.png", "label": "Toilet paper core", "bin": "Recyclable", "category": "Paper and Cardboard" },
+
+  { "image": "assets/game/plastic_bottle_2.png", "label": "Plastic bottle", "bin": "Recyclable", "category": "Plastic (Clean)" },
+  { "image": "assets/game/plastic_bag_1.png", "label": "Plastic", "bin": "Recyclable", "category": "Plastic (Clean)" },
+  { "image": "assets/game/plastic_cup_1.png", "label": "Plastic cup", "bin": "Recyclable", "category": "Plastic (Clean)" },
+  { "image": "assets/game/shampoo_bottle.png", "label": "Shampoo bottle", "bin": "Recyclable", "category": "Plastic (Clean)" },
+  { "image": "assets/game/detergent_bottle.png", "label": "Detergent bottle", "bin": "Recyclable", "category": "Plastic (Clean)" },
+
+  { "image": "assets/game/can_1.png", "label": "Can", "bin": "Recyclable", "category": "Metal" },
+  { "image": "assets/game/soda_can_2.png", "label": "Soda can", "bin": "Recyclable", "category": "Metal" },
+
+  { "image": "assets/game/glass_bottle_1.png", "label": "Glass Bottle", "bin": "Recyclable", "category": "Glass" },
+  { "image": "assets/game/glass_jar.png", "label": "Glass Jar", "bin": "Recyclable", "category": "Glass" }
+]

@@ -55,6 +55,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/food_container.png',
       'assets/game/old_books.png',
       'assets/game/old_toy_car.png'
+      'assets/game/old_towel.png'
 
     ],
     'recyclable': [
@@ -73,8 +74,8 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/plastic_cup_2.png',
       'assets/game/straw_1.png',
       'assets/game/toilet_paper_core.png',
-      'assets/game/plastic_1.png',
-      'assets/game/plastic_2.png',
+      'assets/game/plastic_bag_1.png',
+      'assets/game/plastic_bag_2.png',
       'assets/game/milk_carton.png',
       'assets/game/shampoo_bottle.png',
       'assets/game/detergent_bottle.png',
@@ -99,7 +100,6 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/mask.png',
       'assets/game/toothbrush_trash.png',
       'assets/game/dirty_gloves.png',
-      'assets/game/dirty_towel.png'
     ],
   };
 

@@ -74,6 +74,7 @@ flutter:
     - assets/game/
     - assets/onboarding/
     - assets/models/
+    - assets/data/
 
   fonts:
     - family: Song of Valentine Sans

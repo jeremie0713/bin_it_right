@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             {"image": "assets/game/diaper_2.png", "label": "Diaper"},
             {"image": "assets/game/mask.png", "label": "Mask"},
             {"image": "assets/game/dirty_gloves.png", "label": "Dirty gloves"},
-            {"image": "assets/game/dirty_towel.png", "label": "Dirty towel"},
             {
               "image": "assets/game/toothbrush_trash.png",
               "label": "Toothbrush",
@@ -126,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             {"image": "assets/game/shirt.png", "label": "Shirt"},
             {"image": "assets/game/shoes.png", "label": "Shoes"},
             {"image": "assets/game/socks.png", "label": "Socks"},
+            {"image": "assets/game/old_towel.png", "label": "Old towel"},
           ],
         },
         {
@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               "image": "assets/game/plastic_bottle_2.png",
               "label": "Plastic bottle",
             },
-            {"image": "assets/game/plastic_1.png", "label": "Plastic"},
+            {"image": "assets/game/plastic_bag_1.png", "label": "Plastic"},
             {"image": "assets/game/plastic_cup_1.png", "label": "Plastic cup"},
             {
               "image": "assets/game/shampoo_bottle.png",
