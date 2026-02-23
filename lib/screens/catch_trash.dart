@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:bin_it_right/utils/high_score_service.dart';
 import 'package:flutter/material.dart';
 
 class CatchTrash extends StatefulWidget {
@@ -15,6 +16,10 @@ class _CatchTrashState extends State<CatchTrash> {
   int lifelines = 5;
   double baseFallSpeed = 3.0;
   TrashItem? activeDrag;
+
+  String? lastSpawnedImage;
+  String? lastSpawnedType;
+  final Random _random = Random();
 
   bool gameOver = false;
   bool isPaused = false;
@@ -45,9 +50,8 @@ class _CatchTrashState extends State<CatchTrash> {
       'assets/game/tumbler_bottle.png',
       'assets/game/food_container.png',
       'assets/game/old_books.png',
-      'assets/game/old_toy_car.png'
-      'assets/game/old_towel.png'
-
+      'assets/game/old_toy_car.png',
+      'assets/game/old_towel.png',
     ],
     'recyclable': [
       'assets/game/glass_bottle_1.png',
@@ -70,7 +74,7 @@ class _CatchTrashState extends State<CatchTrash> {
       'assets/game/milk_carton.png',
       'assets/game/shampoo_bottle.png',
       'assets/game/detergent_bottle.png',
-      'assets/game/glass_jar.png'
+      'assets/game/glass_jar.png',
     ],
     'biodegradable': [
       'assets/game/apple_core.png',
@@ -82,7 +86,7 @@ class _CatchTrashState extends State<CatchTrash> {
       'assets/game/watermelon_peel.png',
       'assets/game/moldy_bread.png',
       'assets/game/fish_bone.png',
-      'assets/game/tea_bag.png'
+      'assets/game/tea_bag.png',
     ],
     'non-recyclable': [
       'assets/game/battery.png',
@@ -143,21 +147,41 @@ class _CatchTrashState extends State<CatchTrash> {
 
   void spawnTrash() {
     spawnTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (gameOver) timer.cancel();
-      if (!gameOver && bodyWidth > 0) {
-        final randomType = trashTypes[Random().nextInt(trashTypes.length)];
-        final images = trashImages[randomType]!;
-        final randomImage = images[Random().nextInt(images.length)];
-
-        fallingTrash.add(
-          TrashItem(
-            type: randomType,
-            imagePath: randomImage,
-            x: Random().nextDouble() * (bodyWidth - 50),
-            y: 0,
-          ),
-        );
+      if (gameOver) {
+        timer.cancel();
+        return;
       }
+
+      if (bodyWidth <= 0) return;
+
+      String randomType;
+      String randomImage;
+
+      int safety = 0;
+
+      do {
+        randomType = trashTypes[_random.nextInt(trashTypes.length)];
+        final images = trashImages[randomType]!;
+        randomImage = images[_random.nextInt(images.length)];
+
+        safety++;
+        if (safety > 10) break; // prevent infinite loop
+      } while (randomImage == lastSpawnedImage || // prevent same exact image
+          randomType ==
+              lastSpawnedType // prevent same type twice
+              );
+
+      lastSpawnedImage = randomImage;
+      lastSpawnedType = randomType;
+
+      fallingTrash.add(
+        TrashItem(
+          type: randomType,
+          imagePath: randomImage,
+          x: _random.nextDouble() * (bodyWidth - 50),
+          y: 0,
+        ),
+      );
     });
   }
 
@@ -186,6 +210,7 @@ class _CatchTrashState extends State<CatchTrash> {
             gameOver = true;
             gameTimer?.cancel();
             spawnTimer?.cancel();
+            HighScoreService.saveCatchTrashHighScore(score);
           }
           return true;
         }
@@ -538,7 +563,7 @@ class _CatchTrashState extends State<CatchTrash> {
                       width: MediaQuery.of(context).size.width * 0.8,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: const Color(0xfff3f8ef),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: const [
                           BoxShadow(
@@ -754,19 +779,19 @@ class _CatchTrashState extends State<CatchTrash> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-            title: const Text("Quit Game?"),
-            content: const Text("Are you sure you want to quit the game?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("No"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text("Yes"),
-              ),
-            ],
-          );
+          title: const Text("Quit Game?"),
+          content: const Text("Are you sure you want to quit the game?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Yes"),
+            ),
+          ],
+        );
       },
     );
 

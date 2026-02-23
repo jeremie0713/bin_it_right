@@ -1,8 +1,8 @@
 import 'package:bin_it_right/screens/catch_trash.dart';
 import 'package:bin_it_right/screens/clean_up_game.dart';
 import 'package:bin_it_right/screens/what_bin_quiz_game.dart';
+import 'package:bin_it_right/utils/high_score_service.dart';
 import 'package:flutter/material.dart';
-import 'game_sort_screen.dart';
 import 'dart:math';
 
 class GamesMenuScreen extends StatefulWidget {
@@ -15,6 +15,9 @@ class GamesMenuScreen extends StatefulWidget {
 class _GamesMenuScreenState extends State<GamesMenuScreen>
     with TickerProviderStateMixin {
   late AnimationController _dancingController;
+  int cleanUpHigh = 0;
+  int catchTrashHigh = 0;
+  int quizHigh = 0;
 
   @override
   void initState() {
@@ -25,6 +28,15 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
       duration: const Duration(seconds: 5),
     );
     _dancingController.repeat(reverse: true);
+
+    loadHighScores();
+  }
+
+  Future<void> loadHighScores() async {
+    cleanUpHigh = await HighScoreService.getCleanUpHighScore();
+    catchTrashHigh = await HighScoreService.getCatchTrashHighScore();
+    quizHigh = await HighScoreService.getQuizHighScore();
+    setState(() {});
   }
 
   @override
@@ -125,13 +137,16 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                             title: "LET'S CLEAN UP",
                             subtitle: "Drag the trash into the correct bin!",
                             imagePath: 'assets/images/clean_up.png',
-                            onTap: () {
-                              Navigator.push(
+                            highScore: cleanUpHigh,
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => CleanTheParkGame(),
                                 ),
                               );
+
+                              await loadHighScores();
                             },
                           ),
                           _GameCard(
@@ -139,11 +154,14 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                             subtitle:
                                 "Grab the trash and protect rivers and seas!",
                             imagePath: 'assets/images/river_trash.png',
-                            onTap: () {
-                              Navigator.push(
+                            highScore: catchTrashHigh,
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (_) => CatchTrash()),
                               );
+
+                              await loadHighScores();
                             },
                           ),
                           _GameCard(
@@ -151,13 +169,16 @@ class _GamesMenuScreenState extends State<GamesMenuScreen>
                             subtitle:
                                 "Test your trash sorting skills with this fun quiz game!",
                             imagePath: 'assets/images/what_bin.gif',
-                            onTap: () {
-                              Navigator.push(
+                            highScore: quizHigh,
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => const WhatBinQuizGame(),
                                 ),
                               );
+
+                              await loadHighScores();
                             },
                           ),
                         ],
@@ -194,11 +215,13 @@ class _GameCard extends StatefulWidget {
   final String subtitle;
   final String? imagePath;
   final VoidCallback onTap;
+  final int highScore;
 
   const _GameCard({
     required this.title,
     required this.subtitle,
     required this.onTap,
+    required this.highScore,
     this.imagePath,
   });
 
@@ -296,6 +319,15 @@ class _GameCardState extends State<_GameCard>
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF304612),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "High Score: ${widget.highScore}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
                       ),
                     ),
                   ],

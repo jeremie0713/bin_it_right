@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:bin_it_right/utils/high_score_service.dart';
 
 class CleanTheParkGame extends StatefulWidget {
   const CleanTheParkGame({super.key});
@@ -54,9 +54,8 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/tumbler_bottle.png',
       'assets/game/food_container.png',
       'assets/game/old_books.png',
-      'assets/game/old_toy_car.png'
-      'assets/game/old_towel.png'
-
+      'assets/game/old_toy_car.png',
+      'assets/game/old_towel.png',
     ],
     'recyclable': [
       'assets/game/glass_bottle_1.png',
@@ -79,7 +78,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/milk_carton.png',
       'assets/game/shampoo_bottle.png',
       'assets/game/detergent_bottle.png',
-      'assets/game/glass_jar.png'
+      'assets/game/glass_jar.png',
     ],
     'biodegradable': [
       'assets/game/apple_core.png',
@@ -91,7 +90,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
       'assets/game/watermelon_peel.png',
       'assets/game/moldy_bread.png',
       'assets/game/fish_bone.png',
-      'assets/game/tea_bag.png'
+      'assets/game/tea_bag.png',
     ],
     'non-recyclable': [
       'assets/game/battery.png',
@@ -124,6 +123,8 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
         } else {
           gameOver = true;
           timer.cancel();
+
+          HighScoreService.saveCleanUpHighScore(score); // ⭐ SAVE HERE
         }
       });
     });
@@ -163,6 +164,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
           } else {
             gameOver = true;
             timer.cancel();
+            HighScoreService.saveCleanUpHighScore(score);
           }
         });
       });
@@ -197,6 +199,7 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
           } else {
             gameOver = true;
             timer.cancel();
+            HighScoreService.saveCleanUpHighScore(score);
           }
         });
       });
@@ -397,7 +400,10 @@ class _CleanTheParkGameState extends State<CleanTheParkGame> {
             return Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset('assets/images/yard.gif', fit: BoxFit.cover),
+                  child: Image.asset(
+                    'assets/images/yard.gif',
+                    fit: BoxFit.cover,
+                  ),
                 ),
 
                 // TIMER + SCORE

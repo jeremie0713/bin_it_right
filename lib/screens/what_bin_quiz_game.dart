@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:bin_it_right/utils/high_score_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WhatBinQuizGame extends StatefulWidget {
   const WhatBinQuizGame({super.key});
@@ -15,6 +17,7 @@ class _WhatBinQuizGameState extends State<WhatBinQuizGame> {
   List<QuizItem> questions = [];
   int currentIndex = 0;
   int score = 0;
+  int highScore = 0;
 
   int timeLimit = 20;
   int remainingTime = 20;
@@ -35,7 +38,15 @@ class _WhatBinQuizGameState extends State<WhatBinQuizGame> {
   @override
   void initState() {
     super.initState();
+    loadHighScore();
     loadQuizItems();
+  }
+
+  Future<void> loadHighScore() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      highScore = prefs.getInt('what_bin_high_score') ?? 0;
+    });
   }
 
   /// 📦 LOAD JSON
@@ -212,8 +223,18 @@ class _WhatBinQuizGameState extends State<WhatBinQuizGame> {
   }
 
   /// GAME OVER
-  void gameOver() {
+  void gameOver() async {
     timer?.cancel();
+
+    HighScoreService.saveQuizHighScore(score);
+
+    if (score > highScore) {
+      highScore = score;
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('what_bin_high_score', highScore);
+    }
+
     setState(() {
       isGameOver = true;
       showGameOverOverlay = true;
@@ -257,7 +278,16 @@ class _WhatBinQuizGameState extends State<WhatBinQuizGame> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stars: $score"),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Stars: $score"),
+            Text(
+              "High Score: $highScore",
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
