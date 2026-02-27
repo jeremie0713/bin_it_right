@@ -37,7 +37,7 @@ dependencies:
   google_fonts: ^6.2.1
   image_picker: ^1.1.2
   flutter_svg: ^2.0.10
-  tflite_flutter: ^0.11.0
+  tflite_flutter: ^0.12.1
   path_provider: ^2.1.4
   image: ^3.3.0
   flutter_carousel_widget: ^3.1.0
